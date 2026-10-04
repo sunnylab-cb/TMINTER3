@@ -1,0 +1,58 @@
+{
+  "checkpoint": "runs/pairwise_scratch_S0_independent_seed49_20261002_hpc2_smoke/best.pt",
+  "split": "val",
+  "test_read": false,
+  "completed_seeds": [
+    "11"
+  ],
+  "scope": "counterfactual sensitivity; replacement partners are not biological negative labels",
+  "replacement_policy": "sample among 64 nearest-length eligible validation partners, with replacement",
+  "equivalence_max_logit_error": 0.000244140625,
+  "skipped": [],
+  "results": {
+    "11": {
+      "correct": {
+        "n_directional_chains": 64,
+        "n_residues": 20726,
+        "positive_fraction": 0.14846087040432307,
+        "pr_auc": 0.16932865338241374,
+        "auroc": 0.5518048631593434,
+        "chain_ap_macro": 0.1838194257743336,
+        "chain_ap_median": 0.19030143326293905,
+        "f1_at_0p5": 0.013862633900441084,
+        "mcc_at_0p5": 0.015109151488645929
+      },
+      "replaced": {
+        "n_directional_chains": 64,
+        "n_residues": 20726,
+        "positive_fraction": 0.14846087040432307,
+        "pr_auc": 0.16932865338241374,
+        "auroc": 0.5518048631593434,
+        "chain_ap_macro": 0.1838194257743336,
+        "chain_ap_median": 0.19030143326293905,
+        "f1_at_0p5": 0.013862633900441084,
+        "mcc_at_0p5": 0.015109151488645929
+      },
+      "groups": {
+        "all": {
+          "n": 64,
+          "n_pdb": 11,
+          "mean_ap_drop": 0.0,
+          "pdb_macro_ap_drop": 0.0
+        },
+        "homomer": {
+          "n": 48,
+          "n_pdb": 7,
+          "mean_ap_drop": 0.0,
+          "pdb_macro_ap_drop": 0.0
+        },
+        "heteromer": {
+          "n": 16,
+          "n_pdb": 5,
+          "mean_ap_drop": 0.0,
+          "pdb_macro_ap_drop": 0.0
+        }
+      }
+    }
+  }
+}

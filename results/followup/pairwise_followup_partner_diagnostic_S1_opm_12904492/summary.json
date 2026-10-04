@@ -1,0 +1,148 @@
+{
+  "checkpoint": "runs/pairwise_scratch_S1_opm_seed49_20261002_hpc2/best.pt",
+  "split": "val",
+  "test_read": false,
+  "completed_seeds": [
+    "11",
+    "29",
+    "47"
+  ],
+  "scope": "counterfactual sensitivity; replacement partners are not biological negative labels",
+  "replacement_policy": "sample among 64 nearest-length eligible validation partners, with replacement",
+  "equivalence_max_logit_error": 0.0009765625,
+  "skipped": [],
+  "results": {
+    "11": {
+      "correct": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.3767205925904346,
+        "auroc": 0.8017163523500838,
+        "chain_ap_macro": 0.4435427786966737,
+        "chain_ap_median": 0.4638654627316758,
+        "f1_at_0p5": 0.444232385569471,
+        "mcc_at_0p5": 0.3554754933393783
+      },
+      "replaced": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.3703694452075365,
+        "auroc": 0.7991466286421637,
+        "chain_ap_macro": 0.4356312780189148,
+        "chain_ap_median": 0.458278373654599,
+        "f1_at_0p5": 0.44113115790879565,
+        "mcc_at_0p5": 0.3502487578331877
+      },
+      "groups": {
+        "all": {
+          "n": 8060,
+          "n_pdb": 1011,
+          "mean_ap_drop": 0.00791150067775884,
+          "pdb_macro_ap_drop": 0.006411340341604391
+        },
+        "homomer": {
+          "n": 6460,
+          "n_pdb": 817,
+          "mean_ap_drop": 0.00782920930023206,
+          "pdb_macro_ap_drop": 0.0074722579572877685
+        },
+        "heteromer": {
+          "n": 1600,
+          "n_pdb": 287,
+          "mean_ap_drop": 0.008243752114523217,
+          "pdb_macro_ap_drop": 0.006500663470698426
+        }
+      }
+    },
+    "29": {
+      "correct": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.3767205925904346,
+        "auroc": 0.8017163523500838,
+        "chain_ap_macro": 0.4435427786966737,
+        "chain_ap_median": 0.4638654627316758,
+        "f1_at_0p5": 0.444232385569471,
+        "mcc_at_0p5": 0.3554754933393783
+      },
+      "replaced": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.37040692621010585,
+        "auroc": 0.7992197961859491,
+        "chain_ap_macro": 0.4348649333770442,
+        "chain_ap_median": 0.45876818716938716,
+        "f1_at_0p5": 0.4417255910179881,
+        "mcc_at_0p5": 0.3510338803330632
+      },
+      "groups": {
+        "all": {
+          "n": 8060,
+          "n_pdb": 1011,
+          "mean_ap_drop": 0.008677845319629502,
+          "pdb_macro_ap_drop": 0.007271311490789427
+        },
+        "homomer": {
+          "n": 6460,
+          "n_pdb": 817,
+          "mean_ap_drop": 0.008411966763383941,
+          "pdb_macro_ap_drop": 0.007702714254920832
+        },
+        "heteromer": {
+          "n": 1600,
+          "n_pdb": 287,
+          "mean_ap_drop": 0.009751329990470948,
+          "pdb_macro_ap_drop": 0.0075142975121514684
+        }
+      }
+    },
+    "47": {
+      "correct": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.3767205925904346,
+        "auroc": 0.8017163523500838,
+        "chain_ap_macro": 0.4435427786966737,
+        "chain_ap_median": 0.4638654627316758,
+        "f1_at_0p5": 0.444232385569471,
+        "mcc_at_0p5": 0.3554754933393783
+      },
+      "replaced": {
+        "n_directional_chains": 8060,
+        "n_residues": 3147771,
+        "positive_fraction": 0.13386551944217034,
+        "pr_auc": 0.370015415565766,
+        "auroc": 0.7990475994918772,
+        "chain_ap_macro": 0.4360856375904102,
+        "chain_ap_median": 0.4587768634164005,
+        "f1_at_0p5": 0.441231116833858,
+        "mcc_at_0p5": 0.350384373446123
+      },
+      "groups": {
+        "all": {
+          "n": 8060,
+          "n_pdb": 1011,
+          "mean_ap_drop": 0.007457141106263377,
+          "pdb_macro_ap_drop": 0.006143480916697209
+        },
+        "homomer": {
+          "n": 6460,
+          "n_pdb": 817,
+          "mean_ap_drop": 0.007329556437880753,
+          "pdb_macro_ap_drop": 0.007369808477066348
+        },
+        "heteromer": {
+          "n": 1600,
+          "n_pdb": 287,
+          "mean_ap_drop": 0.007972264204858227,
+          "pdb_macro_ap_drop": 0.006358476997214662
+        }
+      }
+    }
+  }
+}

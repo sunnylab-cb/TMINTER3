@@ -1,0 +1,29 @@
+{
+  "event": "final",
+  "best_epoch": 1,
+  "selection_metric": "chain_ap_macro",
+  "best_val_chain_ap_macro": 0.18122339925805786,
+  "val": {
+    "n_directional_chains": 64,
+    "n_residues": 20726,
+    "positive_fraction": 0.14846087040432307,
+    "pr_auc": 0.1667717479851947,
+    "auroc": 0.5464603958021339,
+    "chain_ap_macro": 0.18122515472296113,
+    "chain_ap_median": 0.18832094836320457,
+    "f1_at_0p5": 0.005149662053427744,
+    "mcc_at_0p5": 0.012657498555466025,
+    "best_threshold": 0.39,
+    "f1_best_threshold": 0.26663016698603886,
+    "mcc_at_best_f1_threshold": 0.05525385570119544,
+    "best_mcc_threshold": 0.41000000000000003,
+    "mcc_best_threshold": 0.05601666758589078,
+    "loss": 0.8891574293375015,
+    "site_loss": 0.74971804022789,
+    "pair_contact_loss": 0.6971969157457352
+  },
+  "test": null,
+  "test_status": "not_evaluated_during_variant_selection",
+  "n_test_pairs": "not_read",
+  "swap_symmetry_max_abs_logit_error": 2.980232238769531e-07
+}

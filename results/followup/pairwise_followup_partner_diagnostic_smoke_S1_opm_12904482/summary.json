@@ -1,0 +1,58 @@
+{
+  "checkpoint": "runs/pairwise_scratch_S1_opm_seed49_20261002_hpc2_smoke/best.pt",
+  "split": "val",
+  "test_read": false,
+  "completed_seeds": [
+    "11"
+  ],
+  "scope": "counterfactual sensitivity; replacement partners are not biological negative labels",
+  "replacement_policy": "sample among 64 nearest-length eligible validation partners, with replacement",
+  "equivalence_max_logit_error": 0.000244140625,
+  "skipped": [],
+  "results": {
+    "11": {
+      "correct": {
+        "n_directional_chains": 64,
+        "n_residues": 20726,
+        "positive_fraction": 0.14846087040432307,
+        "pr_auc": 0.16815758692644717,
+        "auroc": 0.5495353982516804,
+        "chain_ap_macro": 0.1839929107635997,
+        "chain_ap_median": 0.19093977587455926,
+        "f1_at_0p5": 0.005149662053427744,
+        "mcc_at_0p5": 0.012657498555466025
+      },
+      "replaced": {
+        "n_directional_chains": 64,
+        "n_residues": 20726,
+        "positive_fraction": 0.14846087040432307,
+        "pr_auc": 0.16815103140363286,
+        "auroc": 0.5495333358634418,
+        "chain_ap_macro": 0.1839958870612794,
+        "chain_ap_median": 0.19093977587455926,
+        "f1_at_0p5": 0.005149662053427744,
+        "mcc_at_0p5": 0.012657498555466025
+      },
+      "groups": {
+        "all": {
+          "n": 64,
+          "n_pdb": 11,
+          "mean_ap_drop": -2.9762976796741166e-06,
+          "pdb_macro_ap_drop": -9.661357226698173e-07
+        },
+        "homomer": {
+          "n": 48,
+          "n_pdb": 7,
+          "mean_ap_drop": -6.1345223172472665e-06,
+          "pdb_macro_ap_drop": -5.1537921773318036e-06
+        },
+        "heteromer": {
+          "n": 16,
+          "n_pdb": 5,
+          "mean_ap_drop": 6.498376233045333e-06,
+          "pdb_macro_ap_drop": 5.620569609839088e-06
+        }
+      }
+    }
+  }
+}
