@@ -56,6 +56,7 @@ class PairTokenBatchSampler(BatchSampler):
         shuffle: bool,
         seed: int,
         bucket_size: int = 512,
+        joint_grid: bool = False,
     ) -> None:
         self.lengths = [(int(left), int(right)) for left, right in lengths]
         self.batch_size = max(1, int(batch_size))
@@ -66,16 +67,20 @@ class PairTokenBatchSampler(BatchSampler):
         self.seed = int(seed)
         self.bucket_size = max(self.batch_size, int(bucket_size))
         self.epoch = 0
+        self.joint_grid = joint_grid
         oversized = [
             (idx, left, right)
             for idx, (left, right) in enumerate(self.lengths)
-            if left * right > self.max_single_pair_cells
+            if self._cells(left, right) > self.max_single_pair_cells
         ]
         if oversized:
             raise ValueError(
                 f"{len(oversized)} pairs exceed max_single_pair_cells={self.max_single_pair_cells}; "
                 f"first={oversized[:5]}"
             )
+
+    def _cells(self, left: int, right: int) -> int:
+        return (left + right) ** 2 if self.joint_grid else left * right
 
     def _pack(self, indices: list[int]) -> list[list[int]]:
         batches: list[list[int]] = []
@@ -88,7 +93,7 @@ class PairTokenBatchSampler(BatchSampler):
             proposed_left = max(max_left, left)
             proposed_right = max(max_right, right)
             padded_tokens = (proposed_left + proposed_right) * (len(current) + 1)
-            proposed_pair_cells = pair_cells + left * right
+            proposed_pair_cells = pair_cells + self._cells(left, right)
             if current and (
                 len(current) >= self.batch_size
                 or padded_tokens > self.max_tokens
@@ -102,7 +107,7 @@ class PairTokenBatchSampler(BatchSampler):
             current.append(idx)
             max_left = max(max_left, left)
             max_right = max(max_right, right)
-            pair_cells += left * right
+            pair_cells += self._cells(left, right)
         if current:
             batches.append(current)
         return batches
@@ -279,6 +284,7 @@ def _build_loader(config: dict[str, Any], split: str, shuffle: bool) -> tuple[ES
         shuffle=shuffle,
         seed=seed,
         bucket_size=int(training.get("length_bucket_size", 512)),
+        joint_grid=config.get("pair_model", {}).get("mode") == "pairformer",
     )
     workers = int(training.get("num_workers", 4))
     kwargs: dict[str, Any] = {

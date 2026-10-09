@@ -8,6 +8,7 @@ import torch
 from torch import nn
 
 from ppcbind.models.esm_site import ESMSiteClassifier
+from ppcbind.models.pairformer import JointPairformerAdapter, monomer_contact_features
 
 
 def _segment_pool(h: torch.Tensor, mask: torch.Tensor, max_tokens: int) -> tuple[torch.Tensor, torch.Tensor]:
@@ -222,10 +223,12 @@ class ESMPairSiteClassifier(nn.Module):
         pair_config = pair_config or {}
         self.base = ESMSiteClassifier(base_config)
         self.mode = str(pair_config.get("mode", "cross_attention")).lower()
-        if self.mode not in {"independent", "cross_attention", "outer_product"}:
+        if self.mode not in {"independent", "cross_attention", "outer_product", "pairformer"}:
             raise ValueError(f"Unsupported pair mode={self.mode!r}")
         d_model = int(self.base.config.d_model)
-        if self.mode == "outer_product":
+        if self.mode == "pairformer":
+            self.adapter = JointPairformerAdapter(d_model, pair_config)
+        elif self.mode == "outer_product":
             self.adapter = SymmetricOuterProductAdapter(
                 d_model=d_model,
                 pair_rank=int(pair_config.get("pair_rank", 8)),
@@ -260,6 +263,16 @@ class ESMPairSiteClassifier(nn.Module):
     ) -> dict[str, torch.Tensor]:
         left_base = self.base(**left_inputs)
         right_base = self.base(**right_inputs)
+        if self.mode == "pairformer":
+            left_delta, right_delta = torch.zeros_like(left_base["logits"]), torch.zeros_like(right_base["logits"])
+            for idx in range(left_delta.shape[0]):
+                la = int(left_inputs["protein_mask"][idx].sum())
+                lb = int(right_inputs["protein_mask"][idx].sum())
+                a, b = left_base["h_residue"][idx, :la], right_base["h_residue"][idx, :lb]
+                da, db = self.adapter(a, b, monomer_contact_features(left_inputs, idx, la, a.dtype), monomer_contact_features(right_inputs, idx, lb, b.dtype))
+                left_delta[idx, :la], right_delta[idx, :lb] = da, db
+            return {"left_logits": left_base["logits"] + left_delta, "right_logits": right_base["logits"] + right_delta,
+                    "left_h": left_base["h_residue"], "right_h": right_base["h_residue"], "pair_contact_logits": []}
         if self.mode == "independent":
             return {
                 "left_logits": left_base["logits"],

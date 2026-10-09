@@ -8,7 +8,10 @@ Repository assembled on 2026-10-04 from the PDBTM partner-specific experiments.
   commit alone does **not** reproduce these experiments.
 - Executed follow-up snapshot:
   `/hpc2hdd/home/shuang886/jhspoolers/PPC/experiments/pairwise_followup_20261002`
-- Core sources match that snapshot; see `SOURCE_SHA256.txt`.
+- Core sources at initial commit `f2acee6` match that snapshot.
+  `SOURCE_SHA256.txt` tracks the current working version. Pairformer changes
+  are documented separately in `PAIRFORMER_20261006.md` and do not describe
+  the source that produced S0-S9 results.
 - Original experiment bundle remains in
   `/home/husrcf/Code/ProtBind/pypropel_unibio/tmp/pairwise_hpc2_20261001`.
 

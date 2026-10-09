@@ -78,6 +78,11 @@ sbatch --partition=i64m1tga800ue \
 
 ## Current results
 
+New PF0/PF1 Pairformer-inspired trials are described in
+[docs/PAIRFORMER_20261006.md](docs/PAIRFORMER_20261006.md). PF0 completed;
+PF1 timed out during epoch20. The follow-up A/B/C trials are documented in
+[docs/PAIRFORMER_READOUT_20261009.md](docs/PAIRFORMER_READOUT_20261009.md).
+
 Validation checkpoint selection: directional-chain macro average precision.
 The JSON field `pr_auc` is sklearn **average_precision_score**, not trapezoidal
 integration of the PR curve. `Best F1` thresholds below are validation-selected.
