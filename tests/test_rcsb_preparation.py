@@ -34,6 +34,31 @@ assert [r["auth_seq_id"] for r in source["residue_map"]] == [101, 103]
 np.testing.assert_array_equal(source["coords"][:, 0], [0, 1, 10, 11])
 assert source["seq_sha256"] == hashlib.sha256(b"AG").hexdigest()
 
+# Author insertion codes identify distinct observed residues, not alternates.
+insert_structure = gemmi.Structure()
+insert_model = gemmi.Model("1")
+insert_chain = gemmi.Chain("A")
+for label, auth_num, icode, name in [(1, 100, " ", "ALA"),
+                                     (2, 100, "A", "GLY"),
+                                     (3, 100, "B", "SER"),
+                                     (4, 101, " ", "THR")]:
+    residue = gemmi.Residue()
+    residue.name, residue.subchain, residue.label_seq = name, "X1", label
+    residue.seqid = gemmi.SeqId(auth_num, icode)
+    atom = gemmi.Atom()
+    atom.name, atom.element = "CA", gemmi.Element("C")
+    atom.pos, atom.occ = gemmi.Position(label, 0, 0), 1.
+    residue.add_atom(atom)
+    insert_chain.add_residue(residue)
+insert_model.add_chain(insert_chain)
+insert_structure.add_model(insert_model)
+insert_source = prepare_sources(insert_structure, block)["X1"]
+assert insert_source["sequence"] == "AGST"
+assert [(r["auth_seq_id"], r["insertion_code"]) for r in insert_source["residue_map"]] == [
+    (100, ""), (100, "A"), (100, "B"), (101, "")]
+assert insert_source["label_seq_gaps"] == []
+np.testing.assert_array_equal(insert_source["atom_rows"], [0, 1, 2, 3])
+
 rows = [dict(unique_id=str(i), sequence=s) for i, s in enumerate(["ACDEFGHIK", "ACDEFGHIL", "WWWWWWWWW", "ACDEFGHIK" * 10])]
 si.init(rows)
 _, edges, skipped, aligned = si.compare_row(0)

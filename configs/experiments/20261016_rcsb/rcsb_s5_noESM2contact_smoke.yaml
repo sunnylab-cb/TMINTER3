@@ -1,0 +1,83 @@
+data:
+  pair_data_backend: rcsb_observed
+  pair_manifest: /data1/wholeset/RCSBprot/training/ppis_ge50_v1/ready_v1/ready_pair_manifest.csv
+  pair_label_root: /data1/wholeset/RCSBprot/training/ppis_ge50_v1/pairs
+  rcsb_esm_feature_root: /data1/wholeset/RCSBprot/TMINTER3-ESMC/features/unique
+  rcsb_raw_ps_root: /data1/wholeset/RCSBprot/protenix/features/complete_raw_v1
+  rcsb_normalization_stats: /data1/wholeset/RCSBprot/training/ppis_ge50_v1/ready_v1/normalization_stats.json
+  rcsb_feature_mode: spatial_scalar89_train_norm_plus_availability90
+  contact_graph_mode: RCSB_S5_noESM2contact
+model:
+  d_esm: 3456
+  d_seq: 90
+  d_model: 256
+  d_hidden: 512
+  dropout: 0.25
+  classifier_dropout: 0.45
+  max_chains: 128
+  use_chain_embedding: true
+  use_seq_features: true
+  use_position_features: true
+  use_global_context: true
+  use_contact_graph: false
+  n_transformer_layers: 0
+  esm_layer_fusion: concat
+  esm_layer_count: 3
+  use_tcn_context: true
+  tcn_layers: 2
+  tcn_kernel_size: 7
+  tcn_dilations: [1, 2]
+  tcn_block_type: gated_depthwise
+pair_model:
+  mode: outer_product
+  pair_rank: 8
+  pair_hidden: 32
+  bottleneck: 64
+  dropout: 0.1
+  conv_layers: 0
+  pooling: softmax
+  pooling_temperature: 0.5
+training:
+  output_dir: /data1/wholeset/RCSBprot/training/ppis_ge50_v1/runs/rcsb_s5_noESM2contact_smoke_seed49_v2
+  device: cuda:0
+  seed: 49
+  epochs: 1
+  max_train_pairs: 256
+  max_val_pairs: 64
+  smoke_max_chain_length: 512
+  batch_size: 64
+  eval_batch_size: 64
+  max_batch_tokens: 65536
+  max_pair_cells: 1000000
+  max_single_pair_cells: 25000000
+  length_bucket_size: 512
+  num_workers: 8
+  pin_memory: true
+  prefetch_factor: 2
+  persistent_workers: true
+  preload: false
+  base_lr: 0.0001
+  pair_lr: 0.0001
+  freeze_base_epochs: 0
+  warmup_ratio: 0.05
+  min_lr_scale: 0.02
+  weight_decay: 0.1
+  adam_eps: 0.0000001
+  label_smoothing: 0.05
+  ratio_loss_weight: 0.25
+  pair_contact_loss_weight: 0.0
+  max_pos_weight: 20.0
+  grad_clip_norm: 1.0
+  amp: true
+  evaluate_test: false
+  initialization: scratch
+  torch_num_threads: 4
+  hard_negative_fraction: 0.0
+  site_contact_consistency_weight: 0.0
+metadata:
+  task: partner-specific observed-chain 5.5 A heavy-atom PPIS
+  split: full RCSB ge50 MMseqs SI30 cov80 plus same-PDB components; no external exclusions
+  scope: engineering launch smoke only; not a performance benchmark or exact S5 reproduction
+  feature_source: frozen ESMC MLC plus Protenix Mini monomer scalars; no experimental label coordinates as input
+  graph_limitation: ESM2 contact graph not verified for RCSB; explicitly disabled
+  test_policy: no test evaluation or threshold selection

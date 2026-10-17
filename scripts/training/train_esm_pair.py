@@ -7,6 +7,7 @@ import argparse
 import json
 import math
 import random
+import signal
 import time
 from pathlib import Path
 from typing import Any, Iterator
@@ -19,7 +20,15 @@ from torch import nn
 from torch.utils.data import BatchSampler, DataLoader
 
 from ppcbind.data.esm_pair_dataset import ESMPairSiteDataset, collate_esm_pair_features
+from ppcbind.data.rcsb_pair_dataset import (
+    RCSB_NO_GRAPH_ABLATION,
+    RCSB_PAIR_FEATURE_DIM,
+    RCSBPairDataset,
+)
 from ppcbind.models.esm_pair import ESMPairSiteClassifier
+from ppcbind.pair_checkpoint import (
+    atomic_torch_save, capture_rng_state, require_matching_config, restore_rng_state,
+)
 
 
 MODEL_KEYS = (
@@ -67,6 +76,7 @@ class PairTokenBatchSampler(BatchSampler):
         self.seed = int(seed)
         self.bucket_size = max(self.batch_size, int(bucket_size))
         self.epoch = 0
+        self.start_batch = 0
         self.joint_grid = joint_grid
         oversized = [
             (idx, left, right)
@@ -121,7 +131,9 @@ class PairTokenBatchSampler(BatchSampler):
                 rng.shuffle(batch)
             rng.shuffle(batches)
         self.epoch += 1
-        yield from batches
+        if not 0 <= self.start_batch <= len(batches):
+            raise ValueError("Resume batch cursor is outside the epoch")
+        yield from batches[self.start_batch:]
 
     def __len__(self) -> int:
         indices = sorted(range(len(self.lengths)), key=lambda idx: sum(self.lengths[idx]))
@@ -265,16 +277,88 @@ def _base_dataset_kwargs(data: dict[str, Any], training: dict[str, Any], seed: i
     }
 
 
-def _build_loader(config: dict[str, Any], split: str, shuffle: bool) -> tuple[ESMPairSiteDataset, DataLoader]:
+def _build_loader(
+    config: dict[str, Any], split: str, shuffle: bool
+) -> tuple[ESMPairSiteDataset | RCSBPairDataset, DataLoader]:
     data = config["data"]
     training = config["training"]
     seed = int(training.get("seed", 42))
-    dataset = ESMPairSiteDataset(
-        pair_manifest=data["pair_manifest"],
-        pair_label_root=data["pair_label_root"],
-        split=split,
-        base_dataset_kwargs=_base_dataset_kwargs(data, training, seed),
-    )
+    backend = data.get("pair_data_backend", "legacy")
+    if backend == "rcsb_observed":
+        smoke_keys = ("smoke_max_chain_length", "max_train_pairs", "max_val_pairs")
+        if split == "test" and any(training.get(key) is not None for key in smoke_keys):
+            raise ValueError("RCSB test loader cannot be built with smoke limits configured")
+        model_config = config.get("model", {})
+        if model_config.get("d_seq") != RCSB_PAIR_FEATURE_DIM:
+            raise ValueError("RCSB_S5_noESM2contact requires model.d_seq=90")
+        if model_config.get("use_seq_features", True) is not True:
+            raise ValueError("RCSB_S5_noESM2contact requires model.use_seq_features=true")
+        if model_config.get("use_contact_graph") is not False:
+            raise ValueError("RCSB_S5_noESM2contact requires model.use_contact_graph=false")
+        if data.get("contact_graph_mode") != RCSB_NO_GRAPH_ABLATION:
+            raise ValueError(
+                f"RCSB loader requires data.contact_graph_mode={RCSB_NO_GRAPH_ABLATION!r}"
+            )
+        dataset = RCSBPairDataset(
+            pair_manifest=data["pair_manifest"],
+            pair_label_root=data["pair_label_root"],
+            split=split,
+            esm_feature_root=data["rcsb_esm_feature_root"],
+            raw_ps_root=data["rcsb_raw_ps_root"],
+            normalization_stats=data["rcsb_normalization_stats"],
+            feature_mode=data.get("rcsb_feature_mode", ""),
+            contact_graph_mode=data["contact_graph_mode"],
+            feature_cache_size=data.get("rcsb_feature_cache_size", 64),
+        )
+        length_limit_value = training.get("smoke_max_chain_length")
+        cap_key = {"train": "max_train_pairs", "val": "max_val_pairs"}.get(split)
+        pair_cap_value = training.get(cap_key) if cap_key is not None else None
+        if length_limit_value is not None or pair_cap_value is not None:
+            def _positive_limit(value: Any, key: str) -> int:
+                if isinstance(value, bool):
+                    raise ValueError(f"training.{key} must be a positive integer")
+                try:
+                    limit = int(value)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(f"training.{key} must be a positive integer") from exc
+                if limit <= 0 or (isinstance(value, float) and value != limit):
+                    raise ValueError(f"training.{key} must be a positive integer")
+                return limit
+
+            source_count = len(dataset.rows)
+            selected_rows = dataset.rows
+            length_limit = (
+                _positive_limit(length_limit_value, "smoke_max_chain_length")
+                if length_limit_value is not None
+                else None
+            )
+            if length_limit is not None:
+                selected_rows = [
+                    row
+                    for row in selected_rows
+                    if int(row["left_length"]) <= length_limit and int(row["right_length"]) <= length_limit
+                ]
+            pair_cap = _positive_limit(pair_cap_value, cap_key) if pair_cap_value is not None else None
+            if pair_cap is not None:
+                selected_rows = selected_rows[:pair_cap]
+            dataset.rows = selected_rows
+            selected_ids = [str(row["pair_id"]) for row in selected_rows]
+            print(
+                f"RCSB smoke selection split={split} source={source_count} "
+                f"max_chain_length={length_limit} pair_cap={pair_cap} "
+                f"selected={len(selected_ids)} pair_ids={selected_ids!r}"
+            )
+            if not selected_rows:
+                raise ValueError(f"RCSB smoke selection produced no pairs for split={split!r}")
+    elif backend == "legacy":
+        dataset = ESMPairSiteDataset(
+            pair_manifest=data["pair_manifest"],
+            pair_label_root=data["pair_label_root"],
+            split=split,
+            base_dataset_kwargs=_base_dataset_kwargs(data, training, seed),
+        )
+    else:
+        raise ValueError(f"Unknown pair_data_backend: {backend!r}")
     sampler = PairTokenBatchSampler(
         dataset.pair_lengths,
         batch_size=int(training.get("batch_size" if split == "train" else "eval_batch_size", 16)),
@@ -293,6 +377,9 @@ def _build_loader(config: dict[str, Any], split: str, shuffle: bool) -> tuple[ES
         "pin_memory": bool(training.get("pin_memory", True)) and torch.cuda.is_available(),
         "collate_fn": collate_esm_pair_features,
     }
+    if int(training.get("checkpoint_every_steps", 0)) > 0:
+        # Worker startup must not perturb model dropout RNG after resuming.
+        kwargs["generator"] = torch.Generator().manual_seed(seed + {"train": 0, "val": 1, "test": 2}[split])
     if workers > 0:
         kwargs["prefetch_factor"] = int(training.get("prefetch_factor", 2))
         kwargs["persistent_workers"] = bool(training.get("persistent_workers", True))
@@ -454,16 +541,48 @@ def _cosine_scale(step: int, total: int, warmup: int, minimum: float) -> float:
     return minimum + (1.0 - minimum) * 0.5 * (1.0 + math.cos(math.pi * min(1.0, progress)))
 
 
-def main() -> int:
+class TrainingInterrupted(Exception):
+    """Validation interrupted after training progress was checkpointed."""
+
+
+def _main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, type=Path)
+    parser.add_argument("--resume", action="store_true", help="Resume this run's atomic progress.pt")
     args = parser.parse_args()
     config = yaml.safe_load(args.config.read_text())
     training = config["training"]
     torch.set_num_threads(int(training.get("torch_num_threads", 4)))
     output_dir = Path(training["output_dir"])
     # Atomic reservation prevents two jobs from writing into the same run.
-    output_dir.mkdir(parents=True, exist_ok=False)
+    resume_state = None
+    if args.resume:
+        resume_state = torch.load(output_dir / "progress.pt", map_location="cpu", weights_only=False)
+        require_matching_config(resume_state["training_config"], config)
+    else:
+        output_dir.mkdir(parents=True, exist_ok=False)
+    stop_requested = False
+    evaluating = False
+    checkpoint_interval = int(training.get("checkpoint_every_steps", 0))
+
+    def request_stop(signum: int, frame: Any) -> None:
+        nonlocal stop_requested
+        stop_requested = True
+        if evaluating and checkpoint_interval:
+            raise TrainingInterrupted()
+
+    def evaluate_interruptible(*values: Any, **options: Any) -> Any:
+        nonlocal evaluating
+        try:
+            evaluating = True
+            if stop_requested and checkpoint_interval:
+                raise TrainingInterrupted()
+            return _evaluate(*values, **options)
+        finally:
+            evaluating = False
+
+    signal.signal(signal.SIGUSR1, request_stop)
+    signal.signal(signal.SIGTERM, request_stop)
     seed = int(training.get("seed", 42))
     _seed_everything(seed)
     device = torch.device(str(training.get("device", "cuda:0")))
@@ -517,7 +636,8 @@ def main() -> int:
     amp = bool(training.get("amp", True))
     scaler = torch.amp.GradScaler("cuda", enabled=amp and device.type == "cuda")
     epochs = int(training.get("epochs", 15))
-    total_steps = epochs * len(train_loader)
+    batches_per_epoch = len(train_loader)
+    total_steps = epochs * batches_per_epoch
     warmup_steps = int(total_steps * float(training.get("warmup_ratio", 0.05)))
     min_lr_scale = float(training.get("min_lr_scale", 0.02))
     global_step = 0
@@ -527,6 +647,7 @@ def main() -> int:
         "selection": "validation chain_ap_macro; test evaluated once after checkpoint lock",
         "n_train_pairs": len(train_dataset),
         "n_val_pairs": len(val_dataset),
+        "train_batches_per_epoch": batches_per_epoch,
         "n_test_pairs": "not_read_until_checkpoint_lock",
         "train_positive": positive,
         "train_negative": negative,
@@ -543,25 +664,61 @@ def main() -> int:
     log_path = output_dir / "metrics.jsonl"
     best_metric = -math.inf
     best_epoch = 0
+    start_epoch = 1
+    resume_batch = 0
+    if checkpoint_interval < 0:
+        raise ValueError("checkpoint_every_steps cannot be negative")
+    if resume_state is not None:
+        model.load_state_dict(resume_state["model"], strict=True)
+        optimizer.load_state_dict(resume_state["optimizer"])
+        scaler.load_state_dict(resume_state["scaler"])
+        global_step = int(resume_state["global_step"])
+        best_metric = float(resume_state["best_metric"])
+        best_epoch = int(resume_state["best_epoch"])
+        start_epoch = int(resume_state["epoch"])
+        resume_batch = int(resume_state["completed_batches"])
+        restore_rng_state(resume_state["rng"])
+        print(json.dumps({"event": "resume", "epoch": start_epoch,
+                          "completed_batches": resume_batch, "global_step": global_step}), flush=True)
+
+    def save_progress(epoch: int, completed_batches: int, histories: dict[str, list[float]]) -> None:
+        atomic_torch_save({
+            "training_config": config, "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(), "scaler": scaler.state_dict(),
+            "global_step": global_step, "epoch": epoch,
+            "completed_batches": completed_batches, "best_metric": best_metric,
+            "best_epoch": best_epoch, "rng": capture_rng_state(), "histories": histories,
+        }, output_dir / "progress.pt")
+
+    if resume_state is None and checkpoint_interval:
+        save_progress(1, 0, {})
     print(json.dumps({"event": "start", **run_contract}, default=str), flush=True)
 
-    for epoch in range(1, epochs + 1):
-        if epoch == freeze_base_epochs + 1 and freeze_base_epochs > 0:
-            _set_base_trainable(model, True)
-            print(json.dumps({"event": "unfreeze_base", "epoch": epoch}), flush=True)
+    for epoch in range(start_epoch, epochs + 1):
+        _set_base_trainable(model, epoch > freeze_base_epochs)
         model.train()
-        losses: list[float] = []
-        site_losses: list[float] = []
-        pair_losses: list[float] = []
-        consistency_losses: list[float] = []
+        histories = resume_state.get("histories", {}) if resume_state is not None and epoch == start_epoch else {}
+        losses: list[float] = histories.get("loss", [])
+        site_losses: list[float] = histories.get("site", [])
+        pair_losses: list[float] = histories.get("pair", [])
+        consistency_losses: list[float] = histories.get("consistency", [])
+        histories = {"loss": losses, "site": site_losses, "pair": pair_losses, "consistency": consistency_losses}
+        batch_start = resume_batch if epoch == start_epoch else 0
+        train_loader.batch_sampler.epoch = epoch - 1
+        train_loader.batch_sampler.start_batch = batch_start
+        if stop_requested:
+            save_progress(epoch, batch_start, histories)
+            return 75
         started = time.time()
-        for step, batch in enumerate(train_loader, 1):
+        pairs_this_segment = 0
+        for step, batch in enumerate(train_loader, batch_start + 1):
             global_step += 1
             scale = _cosine_scale(global_step, total_steps, warmup_steps, min_lr_scale)
             for group, base_lr in zip(optimizer.param_groups, base_lrs):
                 group["lr"] = base_lr * scale
             left_inputs, left_labels = _move_side(batch["left"], device)
             right_inputs, right_labels = _move_side(batch["right"], device)
+            pairs_this_segment += int(left_labels.shape[0])
             optimizer.zero_grad(set_to_none=True)
             with torch.amp.autocast("cuda", enabled=amp and device.type == "cuda"):
                 output = model(left_inputs, right_inputs)
@@ -603,6 +760,11 @@ def main() -> int:
                             "event": "train_step",
                             "epoch": epoch,
                             "step": step,
+                            "epoch_batches": batches_per_epoch,
+                            "elapsed_segment_seconds": time.time() - started,
+                            "batch_start": batch_start,
+                            "pairs_per_second_segment": pairs_this_segment / max(time.time() - started, 1e-9),
+                            "peak_gpu_allocated_gib": torch.cuda.max_memory_allocated(device) / 2**30 if device.type == "cuda" else 0.0,
                             "loss": float(np.mean(losses[-25:])),
                             "site_loss": float(np.mean(site_losses[-25:])),
                             "pair_contact_loss": float(np.mean(pair_losses[-25:])),
@@ -612,7 +774,15 @@ def main() -> int:
                     ),
                     flush=True,
                 )
-        val_metrics, _ = _evaluate(
+            if stop_requested or (checkpoint_interval and global_step % checkpoint_interval == 0):
+                save_progress(epoch, step, histories)
+                print(json.dumps({"event": "progress_saved", "epoch": epoch, "step": step,
+                                  "global_step": global_step, "stop_requested": stop_requested}), flush=True)
+            if stop_requested:
+                return 75
+        if checkpoint_interval:
+            save_progress(epoch, batches_per_epoch, histories)
+        val_metrics, _ = evaluate_interruptible(
             model,
             val_loader,
             criterion,
@@ -620,6 +790,7 @@ def main() -> int:
             thresholds,
             amp,
             pair_loss_weight,
+            allow_threshold_search=bool(training.get("search_val_threshold_each_epoch", True)),
         )
         record = {
             "event": "epoch",
@@ -641,15 +812,20 @@ def main() -> int:
             "config": run_contract,
             "val": val_metrics,
         }
-        torch.save(state, output_dir / "last.pt")
+        atomic_torch_save(state, output_dir / "last.pt")
         if float(val_metrics["chain_ap_macro"]) > best_metric:
             best_metric = float(val_metrics["chain_ap_macro"])
             best_epoch = epoch
-            torch.save(state, output_dir / "best.pt")
+            atomic_torch_save(state, output_dir / "best.pt")
+        if checkpoint_interval or stop_requested:
+            save_progress(epoch + 1, 0, {})
+        resume_state = None
+        if stop_requested:
+            return 75
 
     best = torch.load(output_dir / "best.pt", map_location=device, weights_only=False)
     model.load_state_dict(best["model"], strict=True)
-    val_metrics, _ = _evaluate(
+    val_metrics, _ = evaluate_interruptible(
         model,
         val_loader,
         criterion,
@@ -679,7 +855,7 @@ def main() -> int:
     # Constructing the test dataset reads its pair labels/counts, so delay it
     # until the validation-selected checkpoint has been locked and reloaded.
     test_dataset, test_loader = _build_loader(config, "test", False)
-    test_metrics, test_chains = _evaluate(
+    test_metrics, test_chains = evaluate_interruptible(
         model,
         test_loader,
         criterion,
@@ -707,6 +883,14 @@ def main() -> int:
     (output_dir / "final_metrics.json").write_text(json.dumps(final, indent=2) + "\n")
     print(json.dumps(final), flush=True)
     return 0
+
+
+def main() -> int:
+    try:
+        return _main()
+    except TrainingInterrupted:
+        print(json.dumps({"event": "validation_interrupted", "resume_from": "progress.pt"}), flush=True)
+        return 75
 
 
 if __name__ == "__main__":

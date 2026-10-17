@@ -1,0 +1,33 @@
+{
+  "baseline_sha256": "5376fa8d8ed697657807d9cf872c6347e72c255db5bf335ca11e3ad46a0b8ada",
+  "variants": [
+    {
+      "name": "independent",
+      "config": "independent.yaml",
+      "output_dir": "/data1/wholeset/RCSBprot/training/ppis_ge50_v1/runs/rcsb_matrix_independent_full_seed49_v1",
+      "sha256": "c26ce2db941b2f8997c815187d6d9b2b85ed915b79e20fce1c218825af2cc359",
+      "question": "Does partner conditioning improve over the shared monomer encoder?"
+    },
+    {
+      "name": "cross_attention",
+      "config": "cross_attention.yaml",
+      "output_dir": "/data1/wholeset/RCSBprot/training/ppis_ge50_v1/runs/rcsb_matrix_cross_attention_full_seed49_v1",
+      "sha256": "aaffb1736e4cbc49bd9de43071aa68af74cb73256179bd732bd061d93988bbd1",
+      "question": "Compare segment-pooled cross-attention against residue-pair outer products."
+    },
+    {
+      "name": "outer_null",
+      "config": "outer_null.yaml",
+      "output_dir": "/data1/wholeset/RCSBprot/training/ppis_ge50_v1/runs/rcsb_matrix_outer_null_full_seed49_v1",
+      "sha256": "736532e870ccf51c7c69fdb16547d8c7bda5225e8ed7845cb660ff439d32fa26",
+      "question": "Does a length-normalized null choice improve over forced partner pooling?"
+    },
+    {
+      "name": "outer_contact",
+      "config": "outer_contact.yaml",
+      "output_dir": "/data1/wholeset/RCSBprot/training/ppis_ge50_v1/runs/rcsb_matrix_outer_contact_full_seed49_v1",
+      "sha256": "76a4a04a043d4c3838c47efca3f44a71220cde8d5545c46a1317a804ec9b18d7",
+      "question": "Does explicit 5.5-A pair-contact supervision improve the same outer-product model?"
+    }
+  ]
+}
