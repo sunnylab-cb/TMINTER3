@@ -1,0 +1,341 @@
+{
+  "split": "val",
+  "test_labels_read": false,
+  "complete": true,
+  "selected_rows_sha256": "4e67317e7325df4257170c01c8ea3f2c4475a482765650802cfea5ce6377f419",
+  "trainer_class_ast_sha256": {
+    "PairTokenBatchSampler": "4657bb41dbb00209cdbcf748b2b5e9affcbd614e9c19231327ec7f428e935c13",
+    "PairResidueLoss": "2e7868b8a78d8f80aa25137720b14d44b542cf29dc389fffb6b237476034147b"
+  },
+  "trainer_file_sha256": "51efe6f091b3a9fd310d6e6f3d1a9cbabb7ca295ee2e7c721962a677bee8b349",
+  "torch_version": "2.13.0+rocm10.0.0",
+  "label_jsonl_read": false,
+  "profiles": {
+    "pdbtm_graph": {
+      "pairs": 4030,
+      "sequence_pair_groups": 1098,
+      "batches": 836,
+      "batch_size_histogram": {
+        "1": 361,
+        "2": 85,
+        "3": 37,
+        "4": 37,
+        "5": 36,
+        "6": 24,
+        "7": 16,
+        "8": 47,
+        "9": 37,
+        "10": 91,
+        "11": 8,
+        "12": 11,
+        "13": 11,
+        "14": 4,
+        "15": 6,
+        "16": 2,
+        "17": 1,
+        "19": 2,
+        "21": 1,
+        "23": 1,
+        "24": 3,
+        "25": 1,
+        "26": 2,
+        "27": 2,
+        "28": 2,
+        "30": 1,
+        "31": 1,
+        "32": 1,
+        "35": 1,
+        "36": 1,
+        "38": 1,
+        "40": 1,
+        "44": 1
+      },
+      "median_batch_size": 2.0,
+      "median_pair_attended_batch_size": 10.0,
+      "min_batch_size": 1,
+      "max_batch_size": 44,
+      "min_pair_outer_coefficient": 2.718573292735972e-05,
+      "max_pair_outer_coefficient": 0.0011961722488038277,
+      "pair_coefficient_ratio_max_min": 44.0,
+      "coefficient_only_effective_pairs": 1513.3324846957166,
+      "coefficient_only_effective_groups": 126.54743504329491,
+      "mean_prevalence": 0.1558452727967081,
+      "batch_weighted_prevalence": 0.11041517237931484,
+      "constant_probability_ce_optimum_without_ratio": 0.4592754478487357,
+      "constant_probability_0p5_actual_loss": 0.7881618112881119,
+      "groups": {
+        "multiplicity/1": {
+          "directional_records": 1020,
+          "record_fraction": 0.12655086848635236,
+          "loss_outer_coefficient_fraction": 0.09433166118519806,
+          "mean_batch_size": 11.496078431372549,
+          "mean_prevalence": 0.1797287844095847
+        },
+        "multiplicity/2-5": {
+          "directional_records": 2194,
+          "record_fraction": 0.27220843672456574,
+          "loss_outer_coefficient_fraction": 0.18653841399575832,
+          "mean_batch_size": 10.681859617137649,
+          "mean_prevalence": 0.16045500130728796
+        },
+        "multiplicity/6-20": {
+          "directional_records": 3500,
+          "record_fraction": 0.43424317617866004,
+          "loss_outer_coefficient_fraction": 0.551835569785454,
+          "mean_batch_size": 11.396,
+          "mean_prevalence": 0.1409777483937151
+        },
+        "multiplicity/>20": {
+          "directional_records": 1346,
+          "record_fraction": 0.16699751861042184,
+          "loss_outer_coefficient_fraction": 0.16729435503358947,
+          "mean_batch_size": 11.753343239227341,
+          "mean_prevalence": 0.168892382167532
+        },
+        "prevalence/<=0.05": {
+          "directional_records": 1160,
+          "record_fraction": 0.14392059553349876,
+          "loss_outer_coefficient_fraction": 0.23210277284295916,
+          "mean_batch_size": 7.703448275862069,
+          "mean_prevalence": 0.0075286675803615906
+        },
+        "prevalence/0.05-0.10": {
+          "directional_records": 789,
+          "record_fraction": 0.0978908188585608,
+          "loss_outer_coefficient_fraction": 0.24582351703452673,
+          "mean_batch_size": 5.424588086185044,
+          "mean_prevalence": 0.08171177043238738
+        },
+        "prevalence/0.10-0.20": {
+          "directional_records": 3628,
+          "record_fraction": 0.4501240694789082,
+          "loss_outer_coefficient_fraction": 0.3827677746161738,
+          "mean_batch_size": 12.023704520396914,
+          "mean_prevalence": 0.16074299123709507
+        },
+        "prevalence/>0.20": {
+          "directional_records": 2483,
+          "record_fraction": 0.30806451612903224,
+          "loss_outer_coefficient_fraction": 0.13930593550634032,
+          "mean_batch_size": 13.705195328231978,
+          "mean_prevalence": 0.24153583780463678
+        },
+        "length/<300": {
+          "directional_records": 2296,
+          "record_fraction": 0.284863523573201,
+          "loss_outer_coefficient_fraction": 0.07387594545937848,
+          "mean_batch_size": 22.412020905923345,
+          "mean_prevalence": 0.1892262838480354
+        },
+        "length/300-599": {
+          "directional_records": 4733,
+          "record_fraction": 0.5872208436724565,
+          "loss_outer_coefficient_fraction": 0.40399486793775075,
+          "mean_batch_size": 8.038030847242764,
+          "mean_prevalence": 0.15716830013801117
+        },
+        "length/600-999": {
+          "directional_records": 823,
+          "record_fraction": 0.1021091811414392,
+          "loss_outer_coefficient_fraction": 0.40729665071770327,
+          "mean_batch_size": 1.3681652490887,
+          "mean_prevalence": 0.08251249278342841
+        },
+        "length/>=1000": {
+          "directional_records": 208,
+          "record_fraction": 0.025806451612903226,
+          "loss_outer_coefficient_fraction": 0.11483253588516742,
+          "mean_batch_size": 1.1538461538461537,
+          "mean_prevalence": 0.047423100540430044
+        }
+      }
+    }
+  },
+  "exact_sequence_group_key": "sha1",
+  "config_sha256": {
+    "pdbtm_graph": "aa6525907c34a59c7c715afdc70808d235f0abc0a4bb51461d123b4464b2b11e"
+  },
+  "caution": "Fixed-parameter loss coefficients, NOT measured gradient shares, Adam update shares, or independent statistical sample sizes. Ratio toys know the labels and are not model predictions.",
+  "loss_probes": [
+    {
+      "weight": 1.0,
+      "smoothing": 0.0,
+      "negative_ce_optimum": 0.0,
+      "positive_ce_optimum": 1.0
+    },
+    {
+      "weight": 1.0,
+      "smoothing": 0.05,
+      "negative_ce_optimum": 0.025,
+      "positive_ce_optimum": 0.975,
+      "max_abs_stationary_gradient": 1.4528631631094413e-08,
+      "label_aware_two_parameter_toy_with_ratio025": [
+        {
+          "length": 100,
+          "positive": 1,
+          "negative_probability": 0.02470985221900024,
+          "positive_probability": 0.9749941402929635,
+          "mean_probability": 0.03421269509973987,
+          "loss": 0.11705514043569565,
+          "max_abs_gradient": 2.8930232218726815e-06
+        },
+        {
+          "length": 100,
+          "positive": 5,
+          "negative_probability": 0.024724637818366105,
+          "positive_probability": 0.9747466368955845,
+          "mean_probability": 0.07222573777222703,
+          "loss": 0.11703185737133026,
+          "max_abs_gradient": 7.026231969575747e-06
+        },
+        {
+          "length": 100,
+          "positive": 10,
+          "negative_probability": 0.024759348594202136,
+          "positive_probability": 0.9747582949987851,
+          "mean_probability": 0.11975924323466045,
+          "loss": 0.1170056089758873,
+          "max_abs_gradient": 1.8894479580922052e-06
+        },
+        {
+          "length": 100,
+          "positive": 20,
+          "negative_probability": 0.024815020572968884,
+          "positive_probability": 0.9749183417447463,
+          "mean_probability": 0.21483568480732437,
+          "loss": 0.11696241050958633,
+          "max_abs_gradient": 1.9942294784414116e-05
+        },
+        {
+          "length": 100,
+          "positive": 50,
+          "negative_probability": 0.025000000000000005,
+          "positive_probability": 0.9749999999999999,
+          "mean_probability": 0.49999999999999994,
+          "loss": 0.11690691858530045,
+          "max_abs_gradient": 3.767199607818128e-08
+        }
+      ]
+    },
+    {
+      "weight": 6.93964,
+      "smoothing": 0.0,
+      "negative_ce_optimum": 0.0,
+      "positive_ce_optimum": 1.0
+    },
+    {
+      "weight": 6.93964,
+      "smoothing": 0.05,
+      "negative_ce_optimum": 0.1510599560640876,
+      "positive_ce_optimum": 0.9963187378159424,
+      "max_abs_stationary_gradient": 1.2063757992564206e-08,
+      "label_aware_two_parameter_toy_with_ratio025": [
+        {
+          "length": 100,
+          "positive": 1,
+          "negative_probability": 0.1430579098211297,
+          "positive_probability": 0.9963185421552131,
+          "mean_probability": 0.15159051614447056,
+          "loss": 0.4624907374382019,
+          "max_abs_gradient": 3.91926005249843e-06
+        },
+        {
+          "length": 100,
+          "positive": 5,
+          "negative_probability": 0.1418137327330749,
+          "positive_probability": 0.9963171709831989,
+          "mean_probability": 0.1845389046455811,
+          "loss": 0.3683195114135742,
+          "max_abs_gradient": 1.1919367537416292e-05
+        },
+        {
+          "length": 100,
+          "positive": 10,
+          "negative_probability": 0.14049725247148975,
+          "positive_probability": 0.996315899445848,
+          "mean_probability": 0.2260791171689256,
+          "loss": 0.2899278998374939,
+          "max_abs_gradient": 2.1932855389650285e-05
+        },
+        {
+          "length": 100,
+          "positive": 20,
+          "negative_probability": 0.13853128850943494,
+          "positive_probability": 0.9962520687862038,
+          "mean_probability": 0.3100754445647887,
+          "loss": 0.19666947424411774,
+          "max_abs_gradient": 6.6909706220030785e-06
+        },
+        {
+          "length": 100,
+          "positive": 50,
+          "negative_probability": 0.13737561726789507,
+          "positive_probability": 0.9962455465983051,
+          "mean_probability": 0.5668105819331001,
+          "loss": 0.08342928439378738,
+          "max_abs_gradient": 1.5279510989785194e-07
+        }
+      ]
+    },
+    {
+      "weight": 10.380668383505242,
+      "smoothing": 0.0,
+      "negative_ce_optimum": 0.0,
+      "positive_ce_optimum": 1.0
+    },
+    {
+      "weight": 10.380668383505242,
+      "smoothing": 0.05,
+      "negative_ce_optimum": 0.2102172514735083,
+      "positive_ce_optimum": 0.9975360116028753,
+      "max_abs_stationary_gradient": 3.9386712558098225e-08,
+      "label_aware_two_parameter_toy_with_ratio025": [
+        {
+          "length": 100,
+          "positive": 1,
+          "negative_probability": 0.1965993049665783,
+          "positive_probability": 0.997535857229972,
+          "mean_probability": 0.20460867048921222,
+          "loss": 0.5863080620765686,
+          "max_abs_gradient": 2.376396697201244e-06
+        },
+        {
+          "length": 100,
+          "positive": 5,
+          "negative_probability": 0.1932197268524595,
+          "positive_probability": 0.9975354396289512,
+          "mean_probability": 0.23343551249128405,
+          "loss": 0.42563924193382263,
+          "max_abs_gradient": 1.2802702258341014e-05
+        },
+        {
+          "length": 100,
+          "positive": 10,
+          "negative_probability": 0.18965430657969679,
+          "positive_probability": 0.9975340731829141,
+          "mean_probability": 0.2704422832400185,
+          "loss": 0.31187501549720764,
+          "max_abs_gradient": 1.9940806481599793e-05
+        },
+        {
+          "length": 100,
+          "positive": 20,
+          "negative_probability": 0.18444007107959098,
+          "positive_probability": 0.9974833689900908,
+          "mean_probability": 0.347048730661691,
+          "loss": 0.19489890336990356,
+          "max_abs_gradient": 3.6816345527768135e-06
+        },
+        {
+          "length": 100,
+          "positive": 50,
+          "negative_probability": 0.1800239379612348,
+          "positive_probability": 0.9974732692252981,
+          "mean_probability": 0.5887486035932664,
+          "loss": 0.07346122711896896,
+          "max_abs_gradient": 5.2023096941411495e-08
+        }
+      ]
+    }
+  ]
+}

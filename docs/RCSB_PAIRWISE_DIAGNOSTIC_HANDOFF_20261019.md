@@ -2,9 +2,13 @@
 
 更新：2026-10-19。运行快照：09:44:34，UTC+08:00。
 
+**后续复核：[loss、接触角色与输入语义的全量审计](RCSB_OBJECTIVE_CONTEXT_AUDIT_20261019.md)**。新增完整 train mask 统计、val 装配层级差异、动态 batch loss 权重、冻结 checkpoint 交换/padding probe，以及完整 val 内部缺失残基统计。下文训练曲线仍保留原快照，不混入后来的时点。
+
 **代码仓库：[sunnylab-cb/TMINTER3](https://github.com/sunnylab-cb/TMINTER3)**
 
 克隆地址：https://github.com/sunnylab-cb/TMINTER3.git
+
+仓库为私有，独立审阅者需要授权或接收证据包；未授权请求返回 404，不代表制品未提交。
 
 本地目录：/home/husrcf/Code/ProtBind/pypropel_unibio/TMINTER3
 
@@ -128,6 +132,8 @@ RCSB 相对 graph control 的 epoch-3 macro AP 差为 +0.05807；探索性 PDB-c
 
 限制：这是共同交集、单 seed、不是新 sealed holdout；PDB bootstrap 未覆盖全部跨 PDB 同源依赖。它不能代替全 RCSB 评估，但反对“扩充数据在所有地方都使模型变差”的表述。
 
+此处比较的是当前完整模型/特征/训练流程，不是仅增加训练数据的因果效应。
+
 ## 5. SI30 为什么没有消除重复？
 
 ~~~text
@@ -237,6 +243,8 @@ $$
 
 ## 10. 最小判别实验建议，尚未启动
 
+本节记录初版计划；其中 training-only 权重和 mask 审计现已完成，新增结果见开头的后续复核。采样/目标函数受控重训仍未启动。
+
 1. **Training-only 权重审计。** 统计 sequence pair、input+mask、PDB/assembly 重复；量化动态 batch 与 CE normalization 后权重。先确认 validation 现象是否也支配 training。
 2. **保留上下文的组均衡。** 原始 instance sampling 对照“先抽 sequence pair，再抽 context”；保留全部 mask，不任取代表、不改 union。固定 optimizer steps/学习率进程，另报 wall time 和 pairs/residues，不能只比较 epoch。
 3. **目标函数等价性控制。** 在简单 BCE 下验证 hard-mask sampling 与同权 soft target 等价，再单独加入 class weight、smoothing、ratio 项；结果违背预期时查归一化/采样。
@@ -316,6 +324,8 @@ Final validation-mask audit row hash:
 > RCSB 在完整 native validation 上 epoch-3 macro AP 为 0.2915，PDBTM S5 graph control 为 0.4323；equal unique-sequence-pair AP 为 0.3985/0.4412。但在 100 PDB 的相同标签共同 validation 上 RCSB 为 0.4231，PDBTM 为 0.3650。数据域、结构来源、graph、class weight 和训练步数均不同。
 >
 > RCSB validation 的 247,726 个方向记录中，87.2% 属于相同 query/partner exact sequences 但存在多个 mask 的组；不是错误率，也不是 training 完整审计结果。输入按 UID 共用 ESM-C 与单体结构，缺少 assembly pose。SI30 做跨 split 隔离，不做实例降采样。
+>
+> 请同时阅读后续审计 RCSB_OBJECTIVE_CONTEXT_AUDIT_20261019.md：train 的对应记录比例为 79.77%；val 同 assembly 固定 side 仍有 78.13% 记录处在不同-mask 组；动态 batch 不等权；约一半 val UID 存在内部 polymer gap。均不能单独作为性能差距的因果证明。仓库私有，确认有权限后再核验源码和 JSON。
 >
 > 请回答：
 > 1. 什么条件下多构象监督是有效正则化或概率学习，什么条件下与实例级目标失配？与 NMA 增强的关键区别是什么？

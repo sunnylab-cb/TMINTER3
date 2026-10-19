@@ -1,0 +1,21 @@
+{
+  "split": "val",
+  "test_labels_read": false,
+  "source_entries": 14514,
+  "validation_pdb_overlap_with_train_test": 0,
+  "source_read_scope": "Whole JSON entries for validation PDBs only; manifest confirms zero train/test PDB overlap. Unselected asym sources in a validation PDB may be decoded but are not analyzed.",
+  "selected_manifest_rows_sha256": "245716c67475e7aa429d60d4d52154ee8e061b5af47055436251a8ed14ec3ad5",
+  "source_mapping_sha256": "acc34bac9f7abf68f2423cb9b529ef118c836a68975d3c149a985e4e6a955909",
+  "sources": 49706,
+  "sources_with_internal_gap": 16636,
+  "unique_uids": 21662,
+  "uids_with_any_internal_gap": 10824,
+  "uids_with_mixed_gap_presence": 0,
+  "directional_records": 247726,
+  "directional_records_with_internal_gap": 63338,
+  "chain_instances": 74539,
+  "chain_instances_with_internal_gap": 23836,
+  "internal_skipped_polymer_positions_by_source": 561360,
+  "sources_with_insertion_code": 76,
+  "caution": "Internal gaps only. No terminal missingness or full construct length estimate; no causal attribution to performance. Counting source_asym, chain instance, UID and directional records are different aggregations."
+}
