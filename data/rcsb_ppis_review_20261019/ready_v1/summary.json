@@ -1,0 +1,58 @@
+{
+  "status": "complete",
+  "input_manifest_sha256": "cfecd7c24e0e5a6b93ebd4576ba5efd58a812960267e7f72016ac47919ca7834",
+  "source_pairs_by_split": {
+    "train": 1420430,
+    "val": 136802,
+    "test": 150633
+  },
+  "ready_pairs_by_split": {
+    "train": 1150993,
+    "val": 123863,
+    "test": 131829
+  },
+  "excluded_pairs_by_split": {
+    "train": 269437,
+    "val": 12939,
+    "test": 18804
+  },
+  "source_unique_endpoints_by_split": {
+    "train": 195200,
+    "val": 24291,
+    "test": 24331
+  },
+  "ready_unique_endpoints_by_split": {
+    "train": 170465,
+    "val": 21662,
+    "test": 21970
+  },
+  "ready_pair_weighted_residues_by_split": {
+    "train": 676182651,
+    "val": 71355972,
+    "test": 71909941
+  },
+  "heldout_protenix_validated_unique_endpoints_by_split": {
+    "val": 21662,
+    "test": 21970
+  },
+  "heldout_protenix_validated_residues_by_split": {
+    "val": 7294176,
+    "test": 6962727
+  },
+  "feature_validation_scope": {
+    "esmc": "file presence and nonzero size only; tensor content not validated",
+    "protenix_train": "content validated and used for train-only normalization",
+    "protenix_heldout": "content validated; no contribution to normalization statistics"
+  },
+  "smoke": {
+    "train_eligible_pairs": 980552,
+    "train_selected_pairs": 256,
+    "train_limit": 256,
+    "val_eligible_pairs": 109895,
+    "val_selected_pairs": 64,
+    "val_limit": 64,
+    "test_pairs_excluded": 131829
+  },
+  "normalization_train_unique_count": 170465,
+  "normalization_train_residue_count": 55003867
+}
