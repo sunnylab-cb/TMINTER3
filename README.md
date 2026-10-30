@@ -6,10 +6,28 @@ interface vectors and, optionally, a residue-pair contact map.
 
 This repository is a standalone extraction of the PDBTM pairwise experiments
 from PPC. It is **not** a released pretrained general-purpose predictor.
-All reported S0-S9 results are validation results from one training seed;
-the frozen test split has not been evaluated for this selection round.
+It now also contains the full-RCSB partner-specific PPIS pipeline. The whole
+repository is the pairwise project; it is not a subdirectory of the single-chain
+M18 model. Canonical remote: <https://github.com/sunnylab-cb/TMINTER3>.
 
-## Task and inputs
+The PDBTM S0-S9 results below are validation results from one training seed;
+the frozen test split has not been evaluated for that selection round. They
+must not be mixed with the later RCSB validation cohort.
+
+## Active experiment tracks
+
+| Track | Split and features | Entry points |
+| --- | --- | --- |
+| PDBTM pairwise | Historical global pairwise-SI30 component split; ESM-C MLC, ESMFold 90D and ESM2 intra-chain contacts | [Original results](#current-results), [provenance](docs/PROVENANCE.md) |
+| Full RCSB pairwise | Observed-coordinate sequences; detected MMseqs SI30/coverage-0.8 edges plus same-PDB joint components; ESM-C MLC and Protenix 90D, no ESM2 contact graph in the initial main experiment | [Active split contract](docs/CURRENT_SPLIT_CONTRACT.md), [HPC3 training](docs/HPC3_FORMAL_TRAINING_20261017.md) |
+| Same-cohort baselines | Frozen RCSB val512; partner-specific 5.5-A labels; no test selection | [X-PAIR comparison](docs/XPAIR_VALIDATION_PILOT_20261030.md), [reproduction](scripts/benchmarks/xpair/README.md) |
+
+No native inter-chain pose is supplied to these sequence/predicted-monomer
+models. An MMseqs detected-edge audit is not an exhaustive global Biopython
+identity certificate. Protein-ligand tasks and their external holdouts are not
+the active PPIS training contract.
+
+## Historical PDBTM Task and Inputs
 
 - Labels: 5.5-A heavy-atom contact to the specified partner, not an
   all-partner union. Unknown residues are masked with -100.
@@ -27,11 +45,13 @@ the frozen test split has not been evaluated for this selection round.
 ```text
 src/ppcbind/          Model and dataset implementation, including dependencies
 scripts/training/    Training and validation partner-use diagnostic
+scripts/benchmarks/  External-system adapters and same-cohort evaluation
 scripts/preparations/ Pair-label generation from existing coordinate features
 scripts/slurm/       Configurable submission entry point
 configs/experiments/ Original experiment configurations
 tests/               Loss and adapter regression checks
 results/             Lightweight final metrics and diagnostic summaries
+data/benchmarks/     Frozen small benchmark inputs and separate label snapshots
 docs/                Contracts, provenance, asset paths and experiment notes
 archive/             Historical site-specific Slurm scripts (not portable)
 ```

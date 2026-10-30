@@ -1,0 +1,39 @@
+{
+  "scope": "frozen_val512_label_free_inference",
+  "smoke": false,
+  "input_sha256": "ee61e1cb3a7f7fa1213c4f8289cc6fa2a027a260f3778c7509b81af34d7897e2",
+  "manifest_sha256": "682a1815212000991f0ceb9ce2c784aa9085bebf8d0d41fa0e5436836eca4108",
+  "input_pairs": 428,
+  "unique_sequences": 532,
+  "test_evaluation": false,
+  "labels_supplied": false,
+  "interaction_gating": false,
+  "precision": "float32_unrounded",
+  "models": {
+    "interface_pioneer": {
+      "checkpoint_sha256": "7ab260dc7917205367cb56ba8f706b36ffa502540c44a5395a1a51457a4c6bd1",
+      "completed": 428
+    },
+    "multitask_xfair": {
+      "checkpoint_sha256": "d8c50d03cd6107d2b411d7095a34243ec1b31e6b7cc1d590329c9328c1e8df72",
+      "completed": 428
+    }
+  },
+  "torch": {
+    "version": "2.13.0+rocm10.0.0",
+    "file": "/home/husrcf/anaconda3/envs/AIAA/lib/python3.12/site-packages/torch/__init__.py",
+    "init_sha256": "cf40c075c95864036e835795756d69b8cccfafa76f3bcde5eba9d06065ccd3d1"
+  },
+  "tokenizer_hashes": {
+    "config.json": "360abb5f6cc715fa8af9b4786706a71fe34c3bee587f86cef49186dcba5e7e84",
+    "tokenizer.json": "b4533f607d9fd665f2d9d94b0cf71870a6fc2fc2ae7cbd516d0e43a9efb406fd",
+    "tokenizer_config.json": "41fcf5b9ace40b2e614c8c12775f033cbbc696871504729c92e578cb21323025",
+    "special_tokens_map.json": "c8995d2f8037fe3a8cfdef30475365e1c314c417880b75abaf8296e3c05d42d6"
+  },
+  "source_wheel_sha256": "1bb6d7230300a492422e8f739925bb9e5dfdfc44d13af91c097cdba3ff611f06",
+  "ankh_revision": "74b371dbfa3ee0a05d32ae74df0c2e0b82d6b9a6",
+  "ankh_weight_sha256": "517b6e8b279dedcb477af240b35c46bd6eb3307723eb281e60d4b2c8a87b889b",
+  "status": "complete",
+  "seconds": 129.02595949172974,
+  "peak_vram_bytes": 5768751104
+}

@@ -1,0 +1,2 @@
+# Preserve the frozen CSV's original CRLF bytes and SHA-256 across platforms.
+data/benchmarks/xpair_val512_20261030/val512_manifest.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

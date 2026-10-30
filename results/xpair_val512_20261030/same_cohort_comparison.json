@@ -1,0 +1,104 @@
+{
+  "scope": "same_frozen_val512_not_test",
+  "input_sha256": "ee61e1cb3a7f7fa1213c4f8289cc6fa2a027a260f3778c7509b81af34d7897e2",
+  "labels_sha256": "d2f7e670f84cae102143782478d00d91fd0ed88d39680b4bb258b31960a6302c",
+  "ours_checkpoint_sha256": "0dddf1302a02cb0330899d43db32a1bb4306302997ef65dc7470f9c5c06edbcd",
+  "xpair_metrics_sha256": "d654c13aa7744417dbf2cded6882d6680813379a426a2bd911da52d09d7bf744",
+  "ours_predictions_sha256": "57faeaf8601f8f1d115ddefbecd127e6425ca06a3d6d55b3bcea38d95b3951d2",
+  "ours_summary_sha256": "3a92160e0b47aa05927398f37b41fa6ba8bdb4f7a23414473170fdfa46e41b90",
+  "contract": "observed-polymer-heavy-atom-5p5-assembly-v2",
+  "threshold_operator": ">",
+  "new_threshold_search": false,
+  "models": {
+    "ours_rcsb8m_epoch5": {
+      "coverage_pair_contexts": 512,
+      "directional_contexts": 1024,
+      "residues": 289902,
+      "positive_fraction": 0.09603935122903602,
+      "macro_ap": 0.301696765514826,
+      "pooled_ap": 0.27388003005804745,
+      "pooled_pr_auc_trapezoid": 0.273868754721024,
+      "pooled_auroc": 0.7622591508522353,
+      "official_0p5": {
+        "gate": 0.5,
+        "f1": 0.2894660475914103,
+        "mcc": 0.22644464542839224
+      },
+      "exact_ties_at_0p5": 4
+    },
+    "interface_pioneer": {
+      "coverage_pair_contexts": 512,
+      "directional_contexts": 1024,
+      "residues": 289902,
+      "positive_fraction": 0.09603935122903602,
+      "macro_ap": 0.2328061493050514,
+      "pooled_ap": 0.17054676881836503,
+      "pooled_pr_auc_trapezoid": 0.1704991010104602,
+      "pooled_auroc": 0.6802245754865046,
+      "official_0p5": {
+        "gate": 0.5,
+        "f1": 0.24092220438342346,
+        "mcc": 0.1559548598965953
+      },
+      "val_best_f1": {
+        "gate": 0.66,
+        "f1": 0.25011991745217244,
+        "mcc": 0.15079819335093056
+      },
+      "val_best_mcc": {
+        "gate": 0.53,
+        "f1": 0.2446524331345968,
+        "mcc": 0.1569341543977859
+      }
+    },
+    "multitask_xfair": {
+      "coverage_pair_contexts": 512,
+      "directional_contexts": 1024,
+      "residues": 289902,
+      "positive_fraction": 0.09603935122903602,
+      "macro_ap": 0.2667873264965762,
+      "pooled_ap": 0.22661274653491723,
+      "pooled_pr_auc_trapezoid": 0.22653482909177275,
+      "pooled_auroc": 0.7292912328633162,
+      "official_0p5": {
+        "gate": 0.5,
+        "f1": 0.24030212182951552,
+        "mcc": 0.17693085462576272
+      },
+      "val_best_f1": {
+        "gate": 0.84,
+        "f1": 0.29612355582799194,
+        "mcc": 0.20858015504321897
+      },
+      "val_best_mcc": {
+        "gate": 0.87,
+        "f1": 0.294442916933981,
+        "mcc": 0.20987358796595953
+      }
+    }
+  },
+  "ours_minus_baseline": {
+    "interface_pioneer": {
+      "macro_ap": 0.0688906162097746,
+      "pooled_ap": 0.10333326123968242,
+      "pooled_pr_auc_trapezoid": 0.10336965371056381,
+      "pooled_auroc": 0.08203457536573067,
+      "f1_at_0p5": 0.04854384320798685,
+      "mcc_at_0p5": 0.07048978553179694
+    },
+    "multitask_xfair": {
+      "macro_ap": 0.03490943901824978,
+      "pooled_ap": 0.04726728352313023,
+      "pooled_pr_auc_trapezoid": 0.04733392562925126,
+      "pooled_auroc": 0.03296791798891907,
+      "f1_at_0p5": 0.049163925761894794,
+      "mcc_at_0p5": 0.04951379080262952
+    }
+  },
+  "limitations": [
+    "Validation pilot, not a sealed test.",
+    "Ours uses ESM-C and predicted monomer structure; X-PAIR uses sequences.",
+    "X-PAIR pretraining overlap audit pending; no significance claim.",
+    "Existing trusted labels reused; geometry not independently recomputed."
+  ]
+}

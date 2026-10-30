@@ -1,0 +1,58 @@
+{
+  "scope": "synthetic compatibility checks only; no biological metrics",
+  "torch_unchanged": {
+    "version": "2.13.0+rocm10.0.0",
+    "file": "/home/husrcf/anaconda3/envs/AIAA/lib/python3.12/site-packages/torch/__init__.py",
+    "init_sha256": "cf40c075c95864036e835795756d69b8cccfafa76f3bcde5eba9d06065ccd3d1"
+  },
+  "device": "cpu",
+  "source": "/home/husrcf/Code/ProtBind/pypropel_unibio/benchmark_pipeline_tmp/pairwise_baselines_20261022/official/X-PAIR-0.1.1",
+  "runtime_vendor": "/home/husrcf/Code/ProtBind/pypropel_unibio/benchmark_pipeline_tmp/pairwise_baselines_20261022/assets/X-PAIR/runtime_vendor",
+  "support_packages": {
+    "pytorch-lightning": "2.5.1",
+    "torchmetrics": "1.7.1",
+    "lightning-utilities": "0.14.3"
+  },
+  "checks": [
+    {
+      "checkpoint": "/home/husrcf/Code/ProtBind/pypropel_unibio/benchmark_pipeline_tmp/pairwise_baselines_20261022/assets/X-PAIR/interface_pioneer.ckpt",
+      "sha256": "7ab260dc7917205367cb56ba8f706b36ffa502540c44a5395a1a51457a4c6bd1",
+      "task": "interface",
+      "plm": "ankh_large",
+      "strict_load": "<All keys matched successfully>",
+      "parameters": 469634,
+      "synthetic_shapes": [
+        [
+          2,
+          64
+        ],
+        [
+          2,
+          93
+        ]
+      ],
+      "swap_max_abs_error": 0.0,
+      "padding_max_abs_error": 4.76837158203125e-07
+    },
+    {
+      "checkpoint": "/home/husrcf/Code/ProtBind/pypropel_unibio/benchmark_pipeline_tmp/pairwise_baselines_20261022/official/X-PAIR-0.1.1/xpair/default_model/multitask_xfair.ckpt",
+      "sha256": "d8c50d03cd6107d2b411d7095a34243ec1b31e6b7cc1d590329c9328c1e8df72",
+      "task": "multitask",
+      "plm": "ankh_large",
+      "strict_load": "<All keys matched successfully>",
+      "parameters": 469634,
+      "synthetic_shapes": [
+        [
+          2,
+          64
+        ],
+        [
+          2,
+          93
+        ]
+      ],
+      "swap_max_abs_error": 0.0,
+      "padding_max_abs_error": 1.1473894119262695e-06
+    }
+  ]
+}
