@@ -1,0 +1,31 @@
+{
+  "scope": "same_frozen_val512_not_test",
+  "input_sha256": "ee61e1cb3a7f7fa1213c4f8289cc6fa2a027a260f3778c7509b81af34d7897e2",
+  "labels_sha256": "d2f7e670f84cae102143782478d00d91fd0ed88d39680b4bb258b31960a6302c",
+  "directions": 1024,
+  "residues": 289902,
+  "schema": {
+    "labels": "flat binary targets",
+    "probabilities": "flat unrounded float32 scores",
+    "lengths": "1024 segment lengths; contexts in val512_inputs order, left then right"
+  },
+  "files": {
+    "ours_rcsb8m": {
+      "path": "ours_rcsb8m/predictions.npz",
+      "sha256": "57faeaf8601f8f1d115ddefbecd127e6425ca06a3d6d55b3bcea38d95b3951d2",
+      "bytes": 632273
+    },
+    "interface_pioneer": {
+      "path": "interface_pioneer/predictions.npz",
+      "sha256": "653196f3c04b69717834e7faaec642d9a5418a01b34711f1e244827691a287e1",
+      "bytes": 727349,
+      "checkpoint_sha256": "7ab260dc7917205367cb56ba8f706b36ffa502540c44a5395a1a51457a4c6bd1"
+    },
+    "multitask_xfair": {
+      "path": "multitask_xfair/predictions.npz",
+      "sha256": "e656f9df9b0b3f150caedc9f037908115b3e0e147f713aacbdc6f6c11ad9c3eb",
+      "bytes": 726762,
+      "checkpoint_sha256": "d8c50d03cd6107d2b411d7095a34243ec1b31e6b7cc1d590329c9328c1e8df72"
+    }
+  }
+}

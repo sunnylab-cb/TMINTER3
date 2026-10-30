@@ -13,9 +13,15 @@ pairs without the optional pair-interaction gate. This is validation only.
   `.gitattributes` rule; do not reformat it because its SHA-256 is pinned.
 - Metrics and hash receipts: `results/xpair_val512_20261030/`.
 - Interpretation and limitations: `docs/XPAIR_VALIDATION_PILOT_20261030.md`.
-- Weights, official source, embeddings and raw prediction NPZs are external
-  assets. They are not redistributed in Git; `.gitignore` excludes model and
-  feature binaries. See the locations below.
+- Small per-residue NPZ bundles for all three models are tracked under
+  `results/xpair_val512_20261030/{ours_rcsb8m,interface_pioneer,multitask_xfair}/`.
+  Each contains flat `labels`, unrounded `probabilities` and 1,024 segment
+  `lengths`. Segment order is input contexts, left then right; within each
+  segment residues follow ascending observed sequence positions.
+  `residue_bundle.json` records the schema, file sizes and SHA-256 hashes.
+- Weights, official source, embeddings and original per-input prediction caches
+  remain external assets. `.gitignore` excludes model/feature binaries and only
+  permits the three explicitly approved score bundles above.
 
 Official resource identities:
 
@@ -96,8 +102,8 @@ HPC3 deployment and raw results:
 
 The original frozen source is the sibling training directory's `code/`; the
 checkpoint is `runs/large_batch8m/best.pt`. Its hash is pinned in the adapter.
-The completed comparison used HPC3 job 780495. Local NPZ predictions are
-excluded from Git but retained with the tracked summary receipt.
+The completed comparison used HPC3 job 780495. Its original NPZ is now tracked
+alongside the summary; model weights and feature tensors are not tracked.
 
 ```bash
 "$PYTHON" scripts/benchmarks/xpair/summarize_comparison.py \

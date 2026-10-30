@@ -22,3 +22,8 @@ artifacts/
 *.tar*
 *.zip
 .DS_Store
+
+# Explicitly approved, small per-residue score bundles (not model/feature files).
+!results/xpair_val512_20261030/ours_rcsb8m/predictions.npz
+!results/xpair_val512_20261030/interface_pioneer/predictions.npz
+!results/xpair_val512_20261030/multitask_xfair/predictions.npz
